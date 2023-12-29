@@ -23,25 +23,25 @@ for i = 1:size(filenames, 2)
     points = select_points(imnData);
     close;
      
-    x = linspace(900, 1600, 220); % es muss für jeden y wert einen x wert geben
+    x = linspace(900, 1600, numel(points{1})); % es muss für jeden y wert einen x wert geben
 
     tiledlayout(2, 2);
 
-    points(1)
     nexttile
-    plot(x, points(1));
+    plot(x, points{1});
     title ('Raw Data');
     xlabel('Wavelength [nm]');
     ylabel('Intensity');
     
     nexttile
-    for i = 1:size(fpoints, 3)
+    for j = 1:numel(points)
 
-        fpoints = gradient(points{i});
+        fpoints = gradient(points{j});
         plot(x, fpoints);
         title ('Gradient od the data');
         xlabel('Wavelength [nm]');
         ylabel('Intensity');
+
         hold on
 
     end
@@ -52,17 +52,13 @@ for i = 1:size(filenames, 2)
     title ('Mean value of the data');
     xlabel('Wavelength [nm]');
     ylabel('Intensity');
-    
 
     nexttile
     title ('Normalisation of the mean value');
     xlabel('Wavelength [nm]');
     ylabel('Intensity');
     
-
 end
-
-
 
 %% processing the image
 function processed_image = process_image(image, dim)
