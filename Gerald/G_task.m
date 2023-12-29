@@ -13,7 +13,7 @@ end
 
 %% load files
 for i = 1:size(filenames, 2)
-    
+
     file = filenames{i};
     load(file)
 
@@ -23,41 +23,58 @@ for i = 1:size(filenames, 2)
     points = select_points(imnData);
     close;
      
-    x = linspace(900, 1600, numel(points{1})); % es muss für jeden y wert einen x wert geben
+    x = linspace(900, 1600, size(points, 2)); % es muss für jeden y wert einen x wert geben
+   
+    h = figure;
+    tiledlayout(2, 2); % tilted layout - i will have a 2 by 2 graph layout
 
-    tiledlayout(2, 2);
-
+    %% presentation of raw data
     nexttile
-    plot(x, points{1});
-    title ('Raw Data');
+
+    plot(x, points(1, :));
+    title('Raw Data');
     xlabel('Wavelength [nm]');
     ylabel('Intensity');
     
+    %% presentation of gradient data
     nexttile
-    for j = 1:numel(points)
 
-        fpoints = gradient(points{j});
+    fpoint_matrix = [];
+
+    for j = 1:size(points, 1)
+
+        fpoints = gradient(points(j, :));
+        fpoint_matrix = [fpoint_matrix; fpoints];
+
         plot(x, fpoints);
-        title ('Gradient od the data');
-        xlabel('Wavelength [nm]');
-        ylabel('Intensity');
 
         hold on
 
     end
 
+    title('Gradient of the data');
+    xlabel('Wavelength [nm]');
+    ylabel('Incline');
     hold off
 
+    %% presentation of mean value
     nexttile
-    title ('Mean value of the data');
-    xlabel('Wavelength [nm]');
-    ylabel('Intensity');
 
-    nexttile
-    title ('Normalisation of the mean value');
+    mean_fpoints = mean(fpoint_matrix, 1);
+    plot(x, mean_fpoints);
+    title('Mean value of the data');
     xlabel('Wavelength [nm]');
-    ylabel('Intensity');
+    ylabel('Incline');
+
+    %% presentation of normalisation
+    nexttile
+
+    plot(x, smoothdata(normalize(mean_fpoints)))
+    title('Normalisation of the mean value');
+    xlabel('Wavelength [nm]');
+    ylabel('Incline');
     
+    uiwait(h);
 end
 
 %% processing the image
@@ -80,5 +97,7 @@ function selected = select_points(data)
     for i = 1:numel(x)
         selected = [selected, data(y(i), :, x(i))];
     end
+    
+    selected = cell2mat(selected.');
 
 end
