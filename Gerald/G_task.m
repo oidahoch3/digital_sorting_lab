@@ -69,12 +69,17 @@ for i = 1:size(filenames, 2)
     %% presentation of normalisation
     nexttile
 
-    plot(x, smoothdata(normalize(mean_fpoints)))
+    norm_fpoints = smoothdata(normalize(mean_fpoints));
+    plot(x, norm_fpoints);
     title('Normalisation of the mean value');
     xlabel('Wavelength [nm]');
     ylabel('Incline');
+
+    [~, filename, ~] = fileparts(file); % getting rid of the extension to properly name the new images
+    writematrix(fpoint_matrix, append(filename, '.processed.xls'));
     
     uiwait(h);
+
 end
 
 %% processing the image
